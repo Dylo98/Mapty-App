@@ -16,6 +16,8 @@ class App {
   #mapEvent;
   constructor() {
     this._getPosition();
+
+    form.addEventListener('submit', this._newWorkout.bind(this));
   }
   _getPosition() {
     if (navigator.geolocation) {
@@ -41,17 +43,36 @@ class App {
     this.#map.on('click', this._showForm.bind(this));
   }
 
-  _showForm() {}
-  _newWorkout() {}
-  _showForm() {}
+  _showForm(mapE) {
+    this.#mapEvent = mapE;
+    form.classList.remove('hidden');
+    inputDistance.focus();
+  }
+  _newWorkout(e) {
+    e.preventDefault();
+
+    inputDistance.value =
+      inputDuration.value =
+      inputCadence.value =
+      inputElevation.value =
+        '';
+
+    const { lat, lng } = this.#mapEvent.latlng;
+    L.marker([lat, lng])
+      .addTo(this.#map)
+      .bindPopup(
+        L.popup({
+          maxWidth: 250,
+          minWidth: 100,
+          autoClose: false,
+          closeOnClick: false,
+          className: 'running-popup',
+        })
+      )
+      .setPopupContent('Workout')
+      .openPopup();
+  }
   _toggleElevationField() {}
 }
 
 const app = new App();
-
-// Leaflet
-
-// L.marker([51.5, -0.09])
-//   .addTo(map)
-//   .bindPopup('A pretty CSS popup.<br> Easily customizable.')
-//   .openPopup();
